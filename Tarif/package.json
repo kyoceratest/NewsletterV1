@@ -1,0 +1,17 @@
+{
+  "name": "french-role-based-webpage",
+  "version": "1.0.0",
+  "description": "A web application for role-based access to downloadable content in French.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "cookie-session": "^1.4.0"
+  },
+  "author": "Your Name",
+  "license": "ISC"
+}

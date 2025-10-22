@@ -1,0 +1,206 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: Verdana, Arial, sans-serif;
+    background: radial-gradient(circle at 20% 20%, #0a9bcd 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    margin-bottom: 1rem;
+    background: white;
+    padding: 10px;
+}
+
+h1 {
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+h2 {
+    color: #585858;
+    font-weight: 700;
+    text-align: center;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+main {
+    width: 100%;
+    max-width: 350px;
+}
+
+form#roleForm {
+    background: rgba(255,255,255,0.95);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+label {
+    font-weight: 600;
+    color: #6842ef;
+}
+
+select, input[type="password"] {
+    padding: 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+}
+
+button[type="submit"] {
+    background: linear-gradient(90deg, #0a9bcd 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.9rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 1rem;
+}
+
+button[type="submit"]:hover {
+    background: linear-gradient(90deg, #0a9bcd 100%);
+}
+
+#downloadLinks {
+    background: rgba(255,255,255,0.97);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 2rem 1.5rem;
+    margin-top: 2rem;
+}
+
+#linksList {
+    list-style: none;
+    padding: 0;
+}
+
+#linksList li a {
+    color: #6842ef;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+#linksList li a:hover {
+    color: #fc575e;
+}
+
+/* Dynamique download cards design */
+.download-main {
+    max-width: 700px;
+    margin: 2rem auto;
+    background: rgba(255,255,255,0.97);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 2.5rem 2rem;
+}
+
+.download-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.download-card {
+    background: linear-gradient(135deg, #0a9bcd 60%, #6842ef 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    width: 260px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    padding: 1.2rem 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.download-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+
+.download-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    margin-right: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.download-icon.pdf {
+    background: #fc575e;
+    color: #fff;
+}
+.download-icon.pdf::before {
+    content: "📄";
+    font-size: 2rem;
+}
+
+.download-icon.excel {
+    background: #2af598;
+    color: #fff;
+}
+.download-icon.excel::before {
+    content: "📊";
+    font-size: 2rem;
+}
+
+.download-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.download-title {
+    font-weight: 600;
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+}
+
+.download-btn {
+    background: #fff;
+    color: #0a9bcd;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s, color 0.2s;
+    width: fit-content;
+}
+.download-btn:hover {
+    background: #6842ef;
+    color: #fff;
+}

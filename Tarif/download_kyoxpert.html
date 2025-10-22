@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Téléchargement - Tarif KYOXpert</title>
+    <link rel="stylesheet" href="login_page/styles/dye-pattern.css">
+    <script src="src/auth.js"></script>
+    <script src="src/download-helper.js"></script>
+    <link rel="stylesheet" href="src/download-bulk.css">
+    <script src="src/download-bulk.js"></script>
+    <script>
+        checkAccess('Tarif KYOXpert');
+        if (
+            document.referrer && document.referrer.indexOf(window.location.origin) !== 0
+        ) {
+            alert("Accès direct interdit. Veuillez passer par la page de connexion.");
+            window.location.href = '/login/login_page/index.html';
+        }
+    </script>
+</head>
+<body>
+    <main class="download-main">
+        <h2>Téléchargement - Tarif KYOXpert</h1>
+        <div class="download-cards">
+            <div class="download-card">
+                <div class="download-icon pdf"></div>
+                <div class="download-info">
+                    <div class="download-title">Matériel (PDF)</div>
+                    <a href="Tarif_newsletter/kyoxpert_materiel.pdf" download="kyoxpert_materiel.pdf" class="download-btn" onclick="downloadFile(this.href, this.download); return false;">Télécharger</a>
+                </div>
+            </div>
+            <div class="download-card">
+                <div class="download-icon excel"></div>
+                <div class="download-info">
+                    <div class="download-title">Matériel (Excel)</div>
+                    <a href="Tarif_newsletter/kyoxpert_materiel.xlsx" download="kyoxpert_materiel.xlsx" class="download-btn" onclick="downloadFile(this.href, this.download); return false;">Télécharger</a>
+                </div>
+            </div>
+            <div class="download-card">
+                <div class="download-icon pdf"></div>
+                <div class="download-info">
+                    <div class="download-title">Consommables (PDF)</div>
+                    <a href="Tarif_newsletter/kyoxpert_consommables.pdf" download="kyoxpert_consommables.pdf" class="download-btn" onclick="downloadFile(this.href, this.download); return false;">Télécharger</a>
+                </div>
+            </div>
+            <div class="download-card">
+                <div class="download-icon excel"></div>
+                <div class="download-info">
+                    <div class="download-title">Consommables (Excel)</div>
+                    <a href="Tarif_newsletter/kyoxpert_consommables.xlsx" download="kyoxpert_consommables.xlsx" class="download-btn" onclick="downloadFile(this.href, this.download); return false;">Télécharger</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

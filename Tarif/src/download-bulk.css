@@ -1,0 +1,27 @@
+/* Styles scoped to bulk selection enhancements on download pages */
+.download-actions {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Keep buttons consistent with existing .download-btn look by reusing its class; only spacing tweaks here */
+.download-actions .download-btn {
+  margin: 0;
+}
+
+/* Ensure each card can host an absolutely positioned control */
+.download-card {
+  position: relative;
+}
+
+/* Position the selection checkbox at the bottom-right of each card */
+.download-card .select-download {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 16px;
+  height: 16px;
+}
