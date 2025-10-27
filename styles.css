@@ -276,8 +276,8 @@ body:not(.newsletter-editor):not(.accueil-page) .content-area {
 }
 #historyModal .search-input:focus {
   outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  border-color: var(--kyocera-blue);
+  box-shadow: 0 0 0 2px rgba(10, 155, 205, 0.2);
 }
 #historyModal .search-icon {
   position: absolute;
@@ -376,7 +376,7 @@ th { background:#f8f9fa; }
 .kyo-input { padding:10px 12px; border:1px solid #ccc; border-radius:6px; font-size:14px; }
 .kyo-input:focus { outline:none; border-color:#0a9bcd; box-shadow:0 0 0 3px rgba(10,155,205,0.15); }
 .kyo-button { display:inline-block; padding:12px 18px; background:#0a9bcd; color:#fff; border:none; border-radius:6px; font-weight:600; cursor:pointer; }
-.kyo-button:hover { background:#098db9; }
+.kyo-button:hover { background: var(--kyocera-blue); }
 .checkbox { display:flex; gap:8px; align-items:flex-start; }
 .form-message { margin-top:10px; font-weight:600; }
 @media (max-width: 768px) {
@@ -560,7 +560,7 @@ body {
 }
 
 .nav-menu li a:hover {
-    background-color: #007bff;
+    background-color: var(--kyocera-blue);
     color: white;
 }
 
@@ -597,7 +597,7 @@ body {
     width: 100%;
     padding: 12px 15px;
     margin-bottom: 8px;
-    background: linear-gradient(135deg, #007bff, #0056b3);
+    background: linear-gradient(135deg, var(--kyocera-blue), var(--kyocera-blue));
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -605,13 +605,13 @@ body {
     font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+    box-shadow: 0 2px 4px rgba(10,155,205,0.3);
 }
 
 .tool-btn:hover {
-    background: linear-gradient(135deg, #0056b3, #004085);
+    background: linear-gradient(135deg, var(--kyocera-blue), var(--kyocera-blue));
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,123,255,0.4);
+    box-shadow: 0 4px 8px rgba(10,155,205,0.4);
 }
 
 .tool-btn i {
@@ -620,19 +620,19 @@ body {
 }
 
 .action-btn {
-    background: linear-gradient(135deg, #28a745, #1e7e34);
+    background: linear-gradient(135deg, var(--kyocera-green), var(--kyocera-green));
 }
 
 .action-btn:hover {
-    background: linear-gradient(135deg, #1e7e34, #155724);
+    background: linear-gradient(135deg, var(--kyocera-green), var(--kyocera-green));
 }
 
 .save-btn {
-    background: linear-gradient(135deg, #fd7e14, #e8590c);
+    background: linear-gradient(135deg, var(--kyocera-orange), var(--kyocera-orange));
 }
 
 .save-btn:hover {
-    background: linear-gradient(135deg, #e8590c, #d13a00);
+    background: linear-gradient(135deg, var(--kyocera-orange), var(--kyocera-orange));
 }
 
 .image-options,
@@ -728,8 +728,8 @@ body {
 
 .toolbar-select:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    border-color: var(--kyocera-blue);
+    box-shadow: 0 0 0 2px rgba(10,155,205,0.25);
 }
 
 .toolbar-btn {
@@ -848,9 +848,9 @@ body:not(.newsletter-editor) .two-column-layout img {
 
 .toolbar-btn:active,
 .toolbar-btn.active {
-    background-color: #007bff;
+    background-color: var(--kyocera-blue);
     color: white;
-    border-color: #007bff;
+    border-color: var(--kyocera-blue);
 }
 
 .color-group {
@@ -904,7 +904,7 @@ body:not(.newsletter-editor) .two-column-layout img {
 
 .table-tool {
     padding: 6px 12px;
-    background-color: #007bff;
+    background-color: var(--kyocera-blue);
     color: white;
     border: none;
     border-radius: 4px;
@@ -914,7 +914,7 @@ body:not(.newsletter-editor) .two-column-layout img {
 }
 
 .table-tool:hover {
-    background-color: #0056b3;
+    background-color: var(--kyocera-blue);
 }
 
 /* Image Editing Toolbar */
