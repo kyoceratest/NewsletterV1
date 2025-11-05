@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       titleSelector: 'h1, h2, h3',
       imageSelector: 'img',
       // Hero résumé follows the 22px "Résumé" style from the editor
-      descSelector: 'p span[style*="font-size: 22px"]',
+      descSelector: 'p span[style*="font-size: 22px"], [style*="font-size: 22px"]',
       targetTitle: '.title-accent',
       targetImage: '.newsletter-hero img', // hero image now synced with edito/article*.html
       targetDesc: '.lead',
@@ -476,10 +476,10 @@ document.addEventListener('DOMContentLoaded', async function () {
                 shortCode = srcPath;
               }
               const param = encodeURIComponent(shortCode);
-              heroAnchor.href = `newsletter.html?article=${param}`;
+              heroAnchor.href = `newsletter_C.html?article=${param}`;
             } catch (_) {
               const param = encodeURIComponent(config.source || '');
-              heroAnchor.href = `newsletter.html?article=${param}`;
+              heroAnchor.href = `newsletter_C.html?article=${param}`;
             }
           }
         } else {
@@ -490,6 +490,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       // Description
       if (config.descSelector && config.targetDesc) {
         let descElement = doc.querySelector(config.descSelector);
+        // Broaden: allow any element with inline 22px font-size (not just within <p>)
+        if (!descElement) descElement = doc.querySelector('[style*="font-size: 22px"], [style*="font-size:22px"]');
         if (!descElement) descElement = doc.querySelector('p span[style*="font-size:"]');
         if (!descElement) descElement = Array.from(doc.querySelectorAll('p')).find(p => (p.innerText || p.textContent || '').trim().length > 0);
         const targetDesc = document.querySelector(config.targetDesc);
@@ -703,7 +705,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           const shortCode = filename.toLowerCase().endsWith(`_${folder.toLowerCase()}`)
             ? filename
             : `${filename}_${folder}`;
-          link.href = `newsletter.html?article=${encodeURIComponent(shortCode)}`;
+          link.href = `newsletter_C.html?article=${encodeURIComponent(shortCode)}`;
         } else {
           link.href = href;
         }
