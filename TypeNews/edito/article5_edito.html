@@ -26,9 +26,10 @@
             height: auto;
         }
         table {
-            width: 100%;
             border-collapse: collapse;
             margin: 15px 0;
+            max-width: 100%;
+            table-layout: fixed;
         }
         table, th, td {
             border: 1px solid #ddd;
@@ -80,9 +81,8 @@
             max-width: 100%;
             height: auto;
         }
-        /* Make sure tables are responsive */
+        /* Tables respect user-defined widths; constrain only maximum width */
         table {
-            width: 100% !important;
             max-width: 100%;
             table-layout: fixed;
         }

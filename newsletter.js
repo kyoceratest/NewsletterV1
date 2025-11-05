@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectEl = document.getElementById('contentSelect');
     const statusEl = document.getElementById('contentStatus');
     const targetEl = document.getElementById('loadedContent');
+    const categoryBar = document.getElementById('categoryBar');
+    let currentCategory = 'edito';
     
     // Helper to read URL query parameters
     function getUrlParameter(name) {
@@ -132,19 +134,23 @@ document.addEventListener('DOMContentLoaded', function () {
     function buildArticleCandidates() {
         const paths = [];
         for (const cat of ARTICLE_CATEGORIES) {
-            if (cat === 'edito') {
-                // In this repo, TypeNews/edito/articleedito.html does not exist; avoid 404s
-                for (let i = 2; i <= 5; i++) {
-                    paths.push(`TypeNews/${cat}/article${i}_${cat}.html`);
-                }
-                // Include the default video page present in edito
-                paths.push('TypeNews/edito/video1.html');
-            } else {
-                for (let i = 1; i <= 5; i++) {
-                    paths.push(`TypeNews/${cat}/article${i}_${cat}.html`);
-                }
+            // Include article1..5 for all categories
+            for (let i = 1; i <= 5; i++) {
+                paths.push(`TypeNews/${cat}/article${i}_${cat}.html`);
             }
+            // Also include the default video page present in edito
+            if (cat === 'edito') paths.push('TypeNews/edito/video1.html');
         }
+        return paths;
+    }
+
+    function buildArticleCandidatesByCategory(cat) {
+        if (!cat) return [];
+        const paths = [];
+        for (let i = 1; i <= 5; i++) {
+            paths.push(`TypeNews/${cat}/article${i}_${cat}.html`);
+        }
+        if (cat === 'edito') paths.push('TypeNews/edito/video1.html');
         return paths;
     }
 
@@ -168,72 +174,161 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function syncArticlesToDropdown() {
-        if (!selectEl) return;
-        // Always rebuild: keep only the first placeholder option, remove everything else
+        // legacy dropdown removed; keep function as no-op to preserve calls
+        return;
+    }
+
+    // Hover menu: build a floating menu for a given category next to the button
+    function ensureMenuForButton(btn) {
+        let menu = btn._catMenu;
+        if (menu) return menu;
+        menu = document.createElement('div');
+        menu.className = 'cat-menu';
+        menu.style.position = 'absolute';
+        menu.style.background = '#7e7e7e';
+        menu.style.border = '1px solid #6b6b6b';
+        menu.style.borderRadius = '6px';
+        menu.style.boxShadow = '0 6px 20px rgba(0,0,0,0.12)';
+        menu.style.padding = '6px 0';
+        menu.style.minWidth = '260px';
+        menu.style.zIndex = '3000';
+        menu.style.display = 'none';
+        menu.style.maxHeight = '320px';
+        menu.style.overflowY = 'auto';
+        // Container to position absolutely relative to document
+        document.body.appendChild(menu);
+        btn._catMenu = menu;
+        return menu;
+    }
+
+    function hideAllMenus(exceptBtn) {
         try {
-            if (selectEl.options && selectEl.options.length > 1) {
-                for (let i = selectEl.options.length - 1; i >= 1; i--) {
-                    selectEl.remove(i);
-                }
-            }
-        } catch (_) { /* no-op */ }
+            if (!categoryBar) return;
+            categoryBar.querySelectorAll('button[data-cat]').forEach(b => {
+                const m = b._catMenu;
+                if (!m) return;
+                if (exceptBtn && b === exceptBtn) return;
+                m.style.display = 'none';
+            });
+        } catch(_) {}
+    }
+
+    function positionMenuUnderButton(menu, btn) {
+        const rect = btn.getBoundingClientRect();
+        const top = window.scrollY + rect.bottom + 6; // below button
+        // Default align left with button
+        let left = window.scrollX + rect.left;
+        // Measure menu width (use minWidth fallback)
+        const menuWidth = Math.max(menu.offsetWidth || 0, 260);
+        const viewportRight = window.scrollX + window.innerWidth;
+        const viewportLeft = window.scrollX;
+        // If it overflows right, shift left to align right edges
+        if (left + menuWidth > viewportRight - 8) {
+            left = window.scrollX + rect.right - menuWidth;
+        }
+        // If still overflows left, clamp to viewport left
+        if (left < viewportLeft + 8) {
+            left = viewportLeft + 8;
+        }
+        menu.style.top = `${top}px`;
+        menu.style.left = `${left}px`;
+    }
+
+    function buildMenuItem(title, path) {
+        const a = document.createElement('a');
+        a.href = '#';
+        a.style.display = 'flex';
+        a.style.alignItems = 'center';
+        a.style.gap = '8px';
+        a.style.padding = '8px 12px';
+        a.style.textDecoration = 'none';
+        a.style.color = '#fff';
+        a.style.whiteSpace = 'nowrap';
+
+        const plus = document.createElement('span');
+        plus.textContent = '+';
+        plus.style.color = '#f06400';
+        plus.style.fontWeight = '800';
+        plus.style.lineHeight = '1';
+
+        const label = document.createElement('span');
+        label.textContent = title;
+
+        a.appendChild(plus);
+        a.appendChild(label);
+        a.addEventListener('mouseenter', () => { a.style.background = 'rgba(255,255,255,0.12)'; });
+        a.addEventListener('mouseleave', () => { a.style.background = 'transparent'; });
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            loadSelected(path);
+            try { a.parentElement.style.display = 'none'; } catch(_) {}
+        });
+        return a;
+    }
+
+    async function showCategoryMenu(cat, btn) {
+        if (!cat || !btn) return;
+        hideAllMenus(btn);
+        const menu = ensureMenuForButton(btn);
+        // Clear previous
+        menu.innerHTML = '';
+        // Loading state
+        const loading = document.createElement('div');
+        loading.textContent = 'Chargement...';
+        loading.style.padding = '8px 12px';
+        loading.style.color = '#fff';
+        menu.appendChild(loading);
+        positionMenuUnderButton(menu, btn);
+        menu.style.display = 'block';
 
         let added = 0;
-        const candidates = buildArticleCandidates();
+        const candidates = buildArticleCandidatesByCategory(cat);
+        const items = [];
         for (const relPath of candidates) {
             try {
                 const encoded = `${encodeURI(relPath)}?t=${Date.now()}`;
-                // Diagnostics: show which path we are checking
-                if (window && window.console && console.debug) console.debug('[articlesync] check', relPath);
                 let res = await fetch(encoded);
                 if (!res.ok) {
-                    // Retry without encoding to support certain dev servers / FS paths with accents
                     const rawUrl = `${relPath}?t=${Date.now()}`;
                     try {
                         const alt = await fetch(rawUrl);
-                        if (alt.ok) {
-                            res = alt;
-                        } else {
-                            if (console && console.warn) console.warn('[articlesync] skip (HTTP)', relPath, res.status, 'alt', alt.status);
-                            continue;
-                        }
-                    } catch (err) {
-                        if (console && console.warn) console.warn('[articlesync] skip (fetch error)', relPath, err);
-                        continue;
-                    }
+                        if (alt.ok) res = alt; else continue;
+                    } catch (_) { continue; }
                 }
                 const raw = await res.text();
                 let title = extractTitle52OnlyFromRaw(raw);
-                // Fallback for video pages: accept first heading/title if no 52px style
                 if (!title && /\/video\d*\.html$/i.test(relPath)) {
                     try {
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(raw, 'text/html');
                         title = extractTitleFromDoc(doc) || '';
-                    } catch (_) { /* no-op */ }
+                    } catch (_) {}
                 }
-                if (!title) {
-                    if (console && console.info) console.info('[articlesync] skip (no 52px title)', relPath);
-                    continue; // filter: must have 52px title (except video fallback)
-                }
-
-                const opt = document.createElement('option');
-                opt.value = relPath; // keep relative path in value
-                opt.textContent = title;
-                opt.setAttribute('data-article-option', '1');
-                selectEl.appendChild(opt);
+                if (!title) continue;
+                items.push({title, path: relPath});
                 added++;
-                if (console && console.info) console.info('[articlesync] added', relPath, '=>', title);
-            } catch (err) {
-                if (console && console.error) console.error('[articlesync] error', relPath, err);
-            }
+            } catch (_) {}
         }
-        // Surface a minimal hint if nothing was added
-        try {
-            if (statusEl) {
-                statusEl.textContent = added > 0 ? '' : 'Aucun article détecté (vérifiez les fichiers TypeNews et le serveur local)';
-            }
-        } catch (_) { /* no-op */ }
+        // Rebuild list
+        menu.innerHTML = '';
+        if (added === 0) {
+            const empty = document.createElement('div');
+            empty.textContent = 'Aucun article disponible';
+            empty.style.padding = '8px 12px';
+            empty.style.color = '#fff';
+            menu.appendChild(empty);
+        } else {
+            items.forEach(it => menu.appendChild(buildMenuItem(it.title, it.path)));
+        }
+
+        // Keep menu open while hovering menu or button
+        let hideTimer = null;
+        const scheduleHide = () => { hideTimer = setTimeout(() => { menu.style.display = 'none'; }, 200); };
+        const cancelHide = () => { if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; } };
+        btn.addEventListener('mouseleave', scheduleHide, { once: true });
+        btn.addEventListener('mouseenter', cancelHide);
+        menu.onmouseenter = cancelHide;
+        menu.onmouseleave = scheduleHide;
     }
 
     // 1) Load content immediately based on URL parameters
@@ -322,8 +417,8 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (_) { /* no-op */ }
 
     async function loadSelected(path) {
-        if (!path) { targetEl.innerHTML = ''; statusEl.textContent = ''; return; }
-        statusEl.textContent = 'Chargement...';
+        if (!path) { targetEl.innerHTML = ''; if (statusEl) statusEl.textContent = ''; return; }
+        if (statusEl) statusEl.textContent = 'Chargement...';
         try {
             // Fallback mapping to existing in-repo files (keeps UI/links unchanged)
             const fallbackMap = {
@@ -440,15 +535,75 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             } catch (_) {}
 
-            statusEl.textContent = '';
+            if (statusEl) statusEl.textContent = '';
         } catch (e) {
             console.error('Load failed:', e);
-            statusEl.textContent = 'Erreur de chargement';
+            if (statusEl) statusEl.textContent = 'Erreur de chargement';
         }
     }
 
     if (selectEl) {
         selectEl.addEventListener('change', (e) => loadSelected(e.target.value));
+    }
+
+    // Category buttons handling
+    if (categoryBar) {
+        categoryBar.addEventListener('click', (e) => {
+            const btn = e.target && e.target.closest('button[data-cat]');
+            if (!btn) return;
+            const cat = btn.getAttribute('data-cat') || 'all';
+            currentCategory = cat;
+            // active style
+            try {
+                categoryBar.querySelectorAll('button[data-cat]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            } catch(_) {}
+            // Try default article1_<cat>.html when clicking
+            const def = `TypeNews/${currentCategory}/article1_${currentCategory}.html`;
+            (async () => {
+                try {
+                    let res = await fetch(`${def}?t=${Date.now()}`);
+                    if (!res.ok) throw new Error('missing');
+                    loadSelected(def);
+                } catch (_) {
+                    loadSelected('TypeNews/noArticle.html');
+                }
+            })();
+        });
+        // Hover -> open menu (use mouseover so it bubbles)
+        categoryBar.addEventListener('mouseover', (e) => {
+            const btn = e.target && e.target.closest('button[data-cat]');
+            if (!btn || !categoryBar.contains(btn)) return;
+            const cat = btn.getAttribute('data-cat');
+            showCategoryMenu(cat, btn);
+        });
+
+        // Click outside to close any open menus
+        document.addEventListener('click', (evt) => {
+            try {
+                categoryBar.querySelectorAll('button[data-cat]').forEach(b => {
+                    const m = b._catMenu;
+                    if (!m) return;
+                    if (m.style.display !== 'none') {
+                        const insideMenu = m.contains(evt.target);
+                        const onButton = b.contains(evt.target);
+                        if (!insideMenu && !onButton) m.style.display = 'none';
+                    }
+                });
+            } catch(_) {}
+        });
+        // Initialize with default category on load
+        currentCategory = 'edito';
+        (async () => {
+            const def = `TypeNews/${currentCategory}/article1_${currentCategory}.html`;
+            try {
+                let res = await fetch(`${def}?t=${Date.now()}`);
+                if (!res.ok) throw new Error('missing');
+                loadSelected(def);
+            } catch (_) {
+                loadSelected('TypeNews/noArticle.html');
+            }
+        })();
     }
 });
 
