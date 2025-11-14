@@ -121,14 +121,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Build and sync additional dropdown options from TypeNews/**/article*.html
     const ARTICLE_CATEGORIES = [
-        'animation',
-        'branding',
-        'com_actus',
         'edito',
-        'formations',
-        'outils_astuces',
+        'com_actus',
+        'animation',
+        'zoom_materiel',
         'solutions_insights',
-        'zoom_materiel'
+        'outils_astuces',
+        'branding',
+        'formations'
     ];
 
     function buildArticleCandidates() {
