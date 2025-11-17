@@ -373,9 +373,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (contentFile) {
                 // Set the dropdown to the selected file and load immediately
-                selectEl.value = contentFile;
-                loadSelected(contentFile);
-            }
         }
     }
 
@@ -590,20 +587,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             } catch(_) {}
         });
-        // Initialize with default category on load ONLY if there is no article deep-link
-        if (!articleParam) {
-            currentCategory = 'edito';
-            (async () => {
-                const def = `TypeNews/${currentCategory}/article1_${currentCategory}.html`;
-                try {
-                    let res = await fetch(`${def}?t=${Date.now()}`);
-                    if (!res.ok) throw new Error('missing');
-                    loadSelected(def);
-                } catch (_) {
-                    loadSelected('TypeNews/noArticle.html');
-                }
-            })();
-        }
     }
 });
 
