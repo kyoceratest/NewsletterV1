@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const targetEl = document.getElementById('loadedContent');
     const categoryBar = document.getElementById('categoryBar');
     let currentCategory = 'edito';
+    let initialArticleLoaded = false;
     
     // Helper to read URL query parameters
     function getUrlParameter(name) {
@@ -336,47 +337,47 @@ document.addEventListener('DOMContentLoaded', function () {
     // - `?article=TypeNews/edito/articleedito.html` (full relative path)
     // - `?article=article1_animation` (short code => TypeNews/animation/articleanimation.html)
     // - legacy `?page=1`
-    if (selectEl) {
-        const articleParam = getUrlParameter('article');
-        if (articleParam) {
-            // Resolve shorthand like "article1_animation" to a full TypeNews path
-            let resolved = articleParam;
-            try {
-                if (!/\//.test(articleParam)) {
-                    // Split at the FIRST underscore so folders like "com_actus" work
-                    const idx = articleParam.indexOf('_');
-                    if (idx > 0 && idx < articleParam.length - 1) {
-                        const baseName = articleParam.slice(0, idx).trim();
-                        const folder = articleParam.slice(idx + 1).trim();
-                        // For edito videos like video1, keep original (TypeNews/edito/video1.html)
-                        const isEditoVideo = /^video\d*$/i.test(baseName) && /^edito$/i.test(folder);
-                        let fileBase = baseName;
-                        if (!isEditoVideo && !fileBase.toLowerCase().endsWith(`_${folder.toLowerCase()}`)) {
-                            fileBase = `${fileBase}_${folder}`; // ensure suffix matches new naming
-                        }
-                        const file = /\.html?$/i.test(fileBase) ? fileBase : `${fileBase}.html`;
-                        resolved = `TypeNews/${folder}/${file}`;
+    function resolveArticleParam(articleParam) {
+        let resolved = articleParam;
+        try {
+            if (articleParam && !/\//.test(articleParam)) {
+                const idx = articleParam.indexOf('_');
+                if (idx > 0 && idx < articleParam.length - 1) {
+                    const baseName = articleParam.slice(0, idx).trim();
+                    const folder = articleParam.slice(idx + 1).trim();
+                    const isEditoVideo = /^video\d*$/i.test(baseName) && /^edito$/i.test(folder);
+                    let fileBase = baseName;
+                    if (!isEditoVideo && !fileBase.toLowerCase().endsWith(`_${folder.toLowerCase()}`)) {
+                        fileBase = `${fileBase}_${folder}`;
                     }
+                    const file = /\.html?$/i.test(fileBase) ? fileBase : `${fileBase}.html`;
+                    resolved = `TypeNews/${folder}/${file}`;
                 }
-            } catch (_) { /* keep original value */ }
-            // Load the provided or resolved article path directly; keep dropdown unchanged if not in options
-            loadSelected(resolved);
-        } else {
-            const page = getUrlParameter('page');
-            let contentFile = '';
-            if (page) {
-                switch(page) {
-                    case '1':
-                        contentFile = 'teteSuperieure.html'; // Tête supérieure
-                        break;
-                    default:
-                        contentFile = '';
-                }
-                if (contentFile) {
-                    // Set the dropdown to the selected file and load immediately
-                    selectEl.value = contentFile;
-                    loadSelected(contentFile);
-                }
+            }
+        } catch (_) { /* keep original value */ }
+        return resolved;
+    }
+
+    const urlArticleParam = getUrlParameter('article');
+    if (urlArticleParam) {
+        const resolved = resolveArticleParam(urlArticleParam);
+        loadSelected(resolved);
+        initialArticleLoaded = true;
+    } else if (selectEl) {
+        const page = getUrlParameter('page');
+        let contentFile = '';
+        if (page) {
+            switch(page) {
+                case '1':
+                    contentFile = 'teteSuperieure.html'; // Tête supérieure
+                    break;
+                default:
+                    contentFile = '';
+            }
+            if (contentFile) {
+                selectEl.value = contentFile;
+                loadSelected(contentFile);
+                initialArticleLoaded = true;
             }
         }
     }
@@ -594,16 +595,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         // Initialize with default category on load
         currentCategory = 'edito';
-        (async () => {
-            const def = `TypeNews/${currentCategory}/article1_${currentCategory}.html`;
-            try {
-                let res = await fetch(`${def}?t=${Date.now()}`);
-                if (!res.ok) throw new Error('missing');
-                loadSelected(def);
-            } catch (_) {
-                loadSelected('TypeNews/noArticle.html');
-            }
-        })();
+        if (!initialArticleLoaded) {
+            (async () => {
+                const def = `TypeNews/${currentCategory}/article1_${currentCategory}.html`;
+                try {
+                    let res = await fetch(`${def}?t=${Date.now()}`);
+                    if (!res.ok) throw new Error('missing');
+                    loadSelected(def);
+                } catch (_) {
+                    loadSelected('TypeNews/noArticle.html');
+                }
+            })();
+        }
     }
 });
 
